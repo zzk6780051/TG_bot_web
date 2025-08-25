@@ -43,6 +43,5 @@ Thumbs.db
 # Logs
 *.log
 
-# Local data (optional, if you don't want to track these files)
-# data/messages.json
-# data/last_update_id.txt
+# Temporary files
+no_changes.flag
