@@ -16,5 +16,14 @@
     "text": "测试",
     "timestamp": 1756080639,
     "processed_at": "2025-08-25T01:11:45.013729+00:00"
+  },
+  {
+    "message_id": 784,
+    "chat_id": -1003014622661,
+    "sender_id": 7515005935,
+    "sender_name": "zzk",
+    "text": "成功",
+    "timestamp": 1756086582,
+    "processed_at": "2025-08-25T02:09:56.825676+00:00"
   }
 ]
