@@ -34,6 +34,7 @@ def generate_html():
     site_title = os.environ.get('SITE_TITLE', 'Telegram 群聊消息存档')
     timezone = os.environ.get('TIMEZONE', 'UTC')
     tz = pytz.timezone(timezone)
+    current_time = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
     
     html_content = f"""<!DOCTYPE html>
 <html lang="zh">
@@ -141,7 +142,7 @@ def generate_html():
         </div>
         
         <div class="footer">
-            <p>由 GitHub Actions 自动生成 | 最后更新: <span id="updateTime">{datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')}</span></p>
+            <p>由 GitHub Actions 自动生成 | 最后更新: <span id="updateTime">{current_time}</span></p>
             <p>每5分钟自动检查新消息</p>
         </div>
     </div>
