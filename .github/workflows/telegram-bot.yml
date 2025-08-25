@@ -1,4 +1,4 @@
-name: Telegram Message Fetcher
+name: Telegram Message Fetcher with GitHub API
 
 on:
   schedule:
@@ -10,6 +10,8 @@ env:
   SITE_TITLE: 'Telegram 群聊消息存档'
   ITEMS_PER_PAGE: 50
   TIMEZONE: 'Asia/Shanghai'
+  REPO_OWNER: ${{ github.repository_owner }}
+  REPO_NAME: ${{ github.event.repository.name }}
 
 jobs:
   fetch-and-deploy:
@@ -18,8 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -29,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests python-dotenv pytz
+          pip install requests pytz
 
       - name: Create data directory
         run: mkdir -p data
@@ -45,32 +46,18 @@ jobs:
         run: |
           python scripts/generate_page.py
 
-      - name: Setup Git config
+      - name: Update files via GitHub API
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          REPO_OWNER: ${{ env.REPO_OWNER }}
+          REPO_NAME: ${{ env.REPO_NAME }}
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-
-      - name: Check for changes
-        id: check_changes
-        run: |
-          git add -A
-          if git diff-index --quiet HEAD --; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "No changes to commit"
-          else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Commit and push changes
-        if: steps.check_changes.outputs.has_changes == 'true'
-        run: |
-          git commit -m "Auto-update: Fetch new Telegram messages [skip ci]"
-          git push
+          python scripts/update_via_api.py
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           publish_dir: ./
           allow_empty_commit: false
           keep_files: true
